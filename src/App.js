@@ -6,7 +6,7 @@ import Header from "./Header";
 import ImageSearchPage from "./ImageSearchPage";  
 import LikedImagePage from "./LikedImagePage";
 import RemovedImagePage from "./RemovedImagePage";
-import "./App.css";  
+import "./App.scss";  
 
 const history = createHistory();
 

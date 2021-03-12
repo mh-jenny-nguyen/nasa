@@ -1,0 +1,151 @@
+.header {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    background-color: #fff;
+    width: 100%;
+    box-sizing: border-box;
+    // box-shadow: 0px 1px 10px #999;
+
+    &__logo {
+        order: 1;
+        &-txt {
+            font-weight: 800;
+            color: #111;
+            text-decoration: none;
+        }
+    }
+
+    &__tab {
+        order: 2;
+
+        &-wrapper {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding-left: 0;
+        }
+
+        &-item {
+            font-size: 10px;
+            font-weight: bold;
+            margin-right: 2px;
+            margin-left: 2px;
+            padding: 8px 10px;
+            background-color: #111;
+            border-radius: 24px;
+            display: block;
+
+            a {
+                text-decoration: none;
+                line-height: 100%;
+                color: #fff;
+                display: block;
+            }
+        }
+    }
+
+    &__filter {
+        order: 4;
+        margin-top: 10px;
+    }
+
+    &__search {
+        order: 3;
+        margin-top: 10px;
+        width: calc(100% - 40px);
+    }
+
+    @media (min-width: 768px) {
+        justify-content: flex-start;
+        padding: 20px;
+
+        &__logo-txt {
+            font-size: 20px;
+        }
+
+        &__logo {
+            order: 1;
+        }
+
+        &__search {
+            order: 2;
+            width: auto;
+            flex-grow: 2;
+            margin: 0 15px;
+        }
+
+        &__filter {
+            margin: 0;
+        }
+
+        &__tab {
+            order: 3;
+
+            &-item {
+                font-size: 13px;
+            }
+        }
+
+    }
+
+    @media (min-width: 992px) {
+        &__search {
+            margin: 0 30px;
+        }
+    }
+}
+
+//search
+.fsearch {
+    background-color: #fbfbfb;
+    border-radius: 20px;
+    display: flex;
+    padding: 4px 10px;
+
+    &__input {
+        width: calc(100% - 10px);
+        input {
+            height: 100%;
+            width: 100%;
+            border: 0;
+            font-size: 14px;
+            box-sizing: border-box;
+            background-color: unset;
+            padding: 0 10px 0 4px;
+            &:focus,
+            &:active {
+                outline: 0;
+            }
+
+        }
+    }
+
+    &__btn {
+        border: 0;
+        background-color: unset;
+        display: flex;
+        align-items: center;
+        padding: 0;
+
+        svg {
+            height: 10px;
+            color: #a1a1a1;
+        }
+    }
+
+    @media (min-width: 768px) {
+        padding: 8px 10px;
+
+        &__btn {
+            svg {
+                height: 14px;
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Shippori Mincho B1', serif;; 
+}
+
+.page {  
+  padding: 0 20px 20px 20px;  
+}
+
+.card {
+  padding-bottom: 15px;
+}
+
+button, input {
+  &:focus {
+    outline: 0;
+  }
+}
