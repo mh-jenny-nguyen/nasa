@@ -3,32 +3,34 @@ import { Link, useHistory } from "react-router-dom";
 import "./Header.scss";
 import Dropdown from "./Dropdown";
 import { ReactComponent as SearchIcon } from "./assets/img/search-solid.svg";
+import {withPostConsumer} from './context';
 
-function Header({ location }) {
+function Header({ context }) {
+  const {changeSort} = context;
   const filters = [
     {
       id: 0,
       title: "Newest",
       selected: true,
-      key: "filter",
+      key: "newest",
     },
     {
       id: 1,
       title: "Oldest",
       selected: false,
-      key: "filter",
+      key: "oldest",
     },
     {
       id: 2,
       title: "Sort A to Z",
       selected: false,
-      key: "filter",
+      key: "atoz",
     },
     {
       id: 3,
       title: "Sort Z to A",
       selected: false,
-      key: "filter",
+      key: "ztoa",
     },
   ];
   const [keyword, setKeyword] = useState("");
@@ -52,6 +54,7 @@ function Header({ location }) {
     temp.forEach((item) => (item.selected = false));
     temp[id].selected = true;
     setFilterList(temp);
+    changeSort(key);
   };
 
   return (
@@ -102,4 +105,4 @@ function Header({ location }) {
   );
 }
 
-export default Header;
+export default withPostConsumer(Header);

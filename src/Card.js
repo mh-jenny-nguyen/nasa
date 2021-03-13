@@ -4,20 +4,21 @@ import { ReactComponent as TrashIcon } from "./assets/img/trash-solid.svg";
 import { ReactComponent as EditIcon } from "./assets/img/pencil-alt-solid.svg";
 import { truncateWithEllipsis } from "./helper.js";
 import { Link } from "react-router-dom";
+import './Card.scss';
 
 const Card = (props) => {
   return (
-    <div className="card" key={props.id}>
+    <div className="card">
       <img
         className="card__img"
         src={props.href}
-        style={{ width: 300 }}
+        style={{display: "block", width: "100%"}}
       />
       <div className="card__detail">
         <div className="card__location">{props.location}</div>
         <div className="card__control">
           <button
-            className="card__btn-like"
+            className="card__btn--like card__btn"
             type="button"
             title="Like photo"
             width="30"
@@ -26,13 +27,13 @@ const Card = (props) => {
             <HeartIcon />
           </button>
           <Link
-            className="card__btn-edit"
+            className="card__btn--edit card__btn"
             to={`/edit/${props.cardId}`}
           >
             <EditIcon />
           </Link>
           <button
-            className="card__btn-remove"
+            className="card__btn--remove card__btn"
             type="button"
             title="Remove photo"
           >
@@ -40,11 +41,13 @@ const Card = (props) => {
           </button>
         </div>
         <div className="card__desc">
-          {truncateWithEllipsis(props.desc, 20)}
+          <p>{truncateWithEllipsis(props.desc, 40)}</p>
+          <p style={{fontStyle: "italic"}}>{props.dateCreated.toDateString('en-GB')}</p>
+
         </div>
       </div>
       <div className="card__title">
-        {truncateWithEllipsis(props.title, 20)}
+        {truncateWithEllipsis(props.title, 40)}
       </div>
     </div>
   );

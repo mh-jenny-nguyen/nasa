@@ -1,73 +1,72 @@
 import React from "react";
 import { getImages, getAllImg } from "./request";
 import InfiniteScroll from "react-infinite-scroller";
-import Masonry from "react-masonry-component";
 import "./HomePage.css";
 import { masonryOptions } from "./exports";
-import { ReactComponent as HeartIcon } from "./assets/img/heart-solid.svg";
-import { ReactComponent as TrashIcon } from "./assets/img/trash-solid.svg";
-import { ReactComponent as EditIcon } from "./assets/img/pencil-alt-solid.svg";
-import { truncateWithEllipsis } from "./helper.js";
-import { Link } from "react-router-dom";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import Card from "./Card";
+import Nothing from "./Nothing";
+import {withPostConsumer} from './context';
 
-function HomePage() {
+function HomePage({context}) {
   const [images, setImages] = React.useState([]);
   const [page, setPage] = React.useState(1);
   const [total, setTotal] = React.useState(0);
   const [initialized, setInitialized] = React.useState(false);
 
-  const getAllImages = async (pg = 1) => {
-    const response = await getAllImg(page);
-    let imgs = images.concat(response.data.collection.items);
-    setImages(imgs);
-    let total = response.data.collection.metadata.total_hits;
-    setTotal(total);
-    pg++;
-    setPage(pg);
-  };
+  const {posts, getPosts, loadMore, nextPage} = context;
 
   React.useEffect(() => {
     if (!initialized) {
-      getAllImages();
       setInitialized(true);
+      getPosts();
     }
   });
 
   return (
     <div className="page">
-      <h1 className="text-center">Home</h1>
-      <InfiniteScroll
-        pageStart={1}
-        loadMore={getAllImages}
-        hasMore={total > images.length}
-      >
-        <Masonry
-          className={"masonry-grid"}
-          elementType={"div"}
-          options={masonryOptions}
-          disableImagesLoaded={false}
-          updateOnEachImageLoad={false}
-        >
-          {images.map((img, i) => {
-            return (
-              img.links &&
-              img.links[0] &&
-              img.links[0].href && (
-                <Card
-                  id={i}
-                  href={img?.links[0]?.href}
-                  location={img?.data[0]?.center}
-                  cardId={img?.data[0]?.nasa_id}
-                  desc={img?.data[0]?.description}
-                  title={img?.data[0]?.title}
-                />
-              )
-            );
-          })}
-        </Masonry>
-      </InfiniteScroll>
+      {(() => {
+        if (typeof posts !== "undefined" && posts.length > 0) {
+          return (
+            <InfiniteScroll
+              pageStart={1}
+              loadMore={nextPage}
+              hasMore={loadMore}
+            >
+              <ResponsiveMasonry
+                columnsCountBreakPoints={{
+                  350: 2,
+                  480: 2,
+                  768: 3,
+                  900: 4,
+                  1200: 6,
+                }}
+              >
+                <Masonry gutter="10px">
+                  {posts.map((item, i) => {
+                    return (
+                      item.cardId && (
+                        <Card
+                          key={i}
+                          href={item.href}
+                          location={item.location}
+                          cardId={item.cardId}
+                          desc={item.desc}
+                          title={item.title}
+                          dateCreated={item.date_created}
+                        />
+                      )
+                    );
+                  })}
+                </Masonry>
+              </ResponsiveMasonry>
+            </InfiniteScroll>
+          );
+        } else {
+          return <Nothing />;
+        }
+      })()}
     </div>
   );
 }
-export default HomePage;
+export default withPostConsumer(HomePage);

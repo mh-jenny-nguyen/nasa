@@ -1,78 +1,97 @@
-import React from "react";  
+import React from "react";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Formik } from "formik";  
-import Form from "react-bootstrap/Form";  
-import Col from "react-bootstrap/Col";  
-import Button from "react-bootstrap/Button";  
-import * as yup from "yup";  
-import InfiniteScroll from "react-infinite-scroller";  
-import Masonry from "react-masonry-component";  
-import { masonryOptions } from "./exports";  
-import { searchImgs } from "./request";
+import { getImages, getAllImg, searchImgs } from "./request";
+import InfiniteScroll from "react-infinite-scroller";
+import "./HomePage.css";
+import { masonryOptions } from "./exports";
+import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
+import Card from "./Card";
+import Nothing from "./Nothing";
 
-function ImageSearchPage() {  
-  const [keyword, setKeyword] = React.useState([]);  
-  const [images, setImages] = React.useState([]);  
-  const [page, setPage] = React.useState(1);  
-  const [total, setTotal] = React.useState(0);  
-  const [searching, setSearching] = React.useState(false); 
+function ImageSearchPage() {
+  const [keyword, setKeyword] = React.useState([]);
+  const [images, setImages] = React.useState([]);
+  const [page, setPage] = React.useState(1);
+  const [total, setTotal] = React.useState(0);
+  const [searching, setSearching] = React.useState(false);
   const location = useLocation();
 
   useEffect(() => {
-      const searchParams = new URLSearchParams(location.search);
-      const q = searchParams.get('q');
-      console.log(q);
-      setKeyword(q);
-      setPage(1);
-      searchImages(q, 1);  
+    const searchParams = new URLSearchParams(location.search);
+    const q = searchParams.get("q");
+    console.log(q);
+    setKeyword(q);
+    setPage(1);
+    searchImages(q, 1);
   }, [location]);
 
-  const searchImages = async (keyword, pg = 1) => {  
-    setSearching(true); 
-    const response = await searchImgs(keyword, page);  
-    let imgs = images.concat(response.data.collection.items); 
-    setImages(imgs);  
-    setTotal(response.data.collection.metadata.total_hits);  
-    setPage(pg);  
-  }; 
+  const searchImages = async (keyword, pg = 1) => {
+    setSearching(true);
+    const response = await searchImgs(keyword, page);
+    let imgs = response.data.collection.items;
+    setImages(imgs);
+    setTotal(response.data.collection.metadata.total_hits);
+    setPage(pg);
+  };
 
-  const getMoreImages = async () => {  
-    let pg = page;  
-    pg++;  
-    const response = await searchImgs(keyword, pg);  
-    let imgs = images.concat(response.data.collection.items); 
-    setImages(imgs);  
-    setTotal(response.data.collection.metadata.total_hits);  
-    setPage(pg);  
-  }; 
+  const getMoreImages = async () => {
+    let pg = page;
+    pg++;
+    const response = await searchImgs(keyword, pg);
+    let imgs = images.concat(response.data.collection.items);
+    setImages(imgs);
+    setTotal(response.data.collection.metadata.total_hits);
+    setPage(pg);
+  };
 
-  React.useEffect(() => {}); 
+  React.useEffect(() => {});
 
-  return (  
-    <div className="page">  
-      <InfiniteScroll  
-        pageStart={1}  
-        loadMore={getMoreImages}  
-        hasMore={searching && total > images.length}  
-      >  
-        <Masonry  
-          className={"grid"}  
-          elementType={"div"}  
-          options={masonryOptions}  
-          disableImagesLoaded={false}  
-          updateOnEachImageLoad={false}  
-        >  
-          {images.map((img, i) => {  
-            return ( img.links && img.links[0]  && img.links[0].href &&
-              <div key={i}>  
-                <img src={img.links[0].href} style={{ width: 300 }} />  
-              </div>  
-            );   
-          })}  
-        </Masonry>  
-      </InfiniteScroll>  
-    </div>  
-  );  
-}  
+  return (
+    <div className="page">
+      {(() => {
+        if (typeof images !== "undefined" && images.length > 0) {
+          return (
+            <InfiniteScroll
+              pageStart={1}
+              loadMore={getMoreImages}
+              hasMore={total > images.length}
+            >
+              <ResponsiveMasonry
+                columnsCountBreakPoints={{
+                  350: 2,
+                  480: 2,
+                  768: 3,
+                  900: 4,
+                  1200: 6,
+                }}
+              >
+                <Masonry gutter="10px">
+                  {images.map((img, i) => {
+                    return (
+                      img.links &&
+                      img.links[0] &&
+                      img.links[0].href && (
+                        <Card
+                          key={i}
+                          href={img?.links[0]?.href}
+                          location={img?.data[0]?.center}
+                          cardId={img?.data[0]?.nasa_id}
+                          desc={img?.data[0]?.description}
+                          title={img?.data[0]?.title}
+                        />
+                      )
+                    );
+                  })}
+                </Masonry>
+              </ResponsiveMasonry>
+            </InfiniteScroll>
+          );
+        } else {
+          return <Nothing />;
+        }
+      })()}
+    </div>
+  );
+}
 export default ImageSearchPage;

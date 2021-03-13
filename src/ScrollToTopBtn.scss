@@ -1,0 +1,24 @@
+.gtt-btn {
+    position: fixed;
+    right: 20px;
+    bottom: 25px;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 0;
+    background-color: #FBFBFB;
+    cursor: pointer;
+    z-index: 999;
+    &:hover {
+        background-color: #111;
+
+        svg {
+            color: #fff;
+        }
+    }
+
+    svg {
+        height: 20px;
+    }
+}
