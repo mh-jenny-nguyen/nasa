@@ -1,30 +1,24 @@
 import React from "react";
-import { getImages, getAllImg } from "./request";
-import InfiniteScroll from "react-infinite-scroller";
 import "./HomePage.css";
-import { masonryOptions } from "./exports";
+import InfiniteScroll from "react-infinite-scroller";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import Card from "./Card";
 import Nothing from "./Nothing";
+import PageContainer from './PageContainer';
 import {withPostConsumer} from './context';
 
 function HomePage({context}) {
-  const [images, setImages] = React.useState([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
   const [initialized, setInitialized] = React.useState(false);
-
-  const {posts, getPosts, loadMore, nextPage} = context;
+  const {posts, getPosts, loadMore, nextPage, likePost, removePost} = context;
 
   React.useEffect(() => {
     if (!initialized) {
       setInitialized(true);
-      getPosts();
     }
   });
 
   return (
-    <div className="page">
+    <PageContainer>
       {(() => {
         if (typeof posts !== "undefined" && posts.length > 0) {
           return (
@@ -47,13 +41,16 @@ function HomePage({context}) {
                     return (
                       item.cardId && (
                         <Card
-                          key={i}
+                          key={item.cardId}
                           href={item.href}
                           location={item.location}
                           cardId={item.cardId}
                           desc={item.desc}
                           title={item.title}
                           dateCreated={item.date_created}
+                          likeState={(item.like !== undefined && item.like ? true : false)}
+                          onClickLikeBtn={likePost}
+                          onClickRemoveBtn={removePost}
                         />
                       )
                     );
@@ -66,7 +63,7 @@ function HomePage({context}) {
           return <Nothing />;
         }
       })()}
-    </div>
+    </PageContainer>
   );
 }
 export default withPostConsumer(HomePage);

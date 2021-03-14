@@ -4,14 +4,14 @@ export const truncateWithEllipsis = (str, n = 20) => {
     : str;
 };
 
-export const compareDate = (dateObj1, dateObj2) => {
-  if (dateObj1 < dateObj2) {
-    return -1;
+export const dateFormat = (date) => {
+  let format = '';
+  let timeStamp = Date.parse(date);
+  let temp = new Date(timeStamp);
+
+  if(typeof temp.getMonth  === "function") {
+    format = temp.toDateString('en-GB');
   }
 
-  if (dateObj1 > dateObj2) {
-    return 1;
-  }
-  
-  return 0;
-};
+  return format;
+}

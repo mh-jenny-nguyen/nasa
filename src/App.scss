@@ -20,7 +20,7 @@ input {
 }
 
 .page {
-  min-height: 100vh;
+  min-height: calc(100vh + 10px);
   box-sizing: border-box;
   position: relative;
   padding: 84px 20px 20px 20px;

@@ -7,6 +7,8 @@ import {withPostConsumer} from './context';
 
 function Header({ context }) {
   const {changeSort} = context;
+  const [keyword, setKeyword] = React.useState('');
+
   const filters = [
     {
       id: 0,
@@ -33,7 +35,6 @@ function Header({ context }) {
       key: "ztoa",
     },
   ];
-  const [keyword, setKeyword] = useState("");
   const [filterList, setFilterList] = useState(filters);
   let history = useHistory();
 

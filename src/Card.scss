@@ -24,12 +24,26 @@
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: flex-start;
-        opacity: 0;
         cursor: pointer;
-        transition: opacity 0.4s ease-in-out;
+        
+        div:not(.card__control),
+        .card__control button,
+        .card__control a {
+            opacity: 0;
+        }
+
+        div,
+        button,
+        a {
+            transition: opacity 0.4s ease-in-out;
+        }
         
         &:hover {
-            opacity: 1;
+            div,
+            .card__control button,
+            .card__control a {
+                opacity: 1;
+            }
         }
     }
     
@@ -71,6 +85,7 @@
         svg {
             height: 15px;
             color: #111;
+            pointer-events: none;
         }
         
         &:hover {
@@ -78,6 +93,15 @@
             
             svg {
                 color: #fbfbfb;
+            }
+        }
+
+        &--like-up {
+            background-color: #fff !important;
+            opacity: 1  !important;
+
+            svg {
+                color: #E90029 !important;
             }
         }
     }

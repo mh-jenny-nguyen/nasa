@@ -1,61 +1,44 @@
 import React from "react";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { getImages, getAllImg, searchImgs } from "./request";
 import InfiniteScroll from "react-infinite-scroller";
 import "./HomePage.css";
-import { masonryOptions } from "./exports";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
 import Card from "./Card";
 import Nothing from "./Nothing";
+import { withPostConsumer } from "./context";
 
-function ImageSearchPage() {
-  const [keyword, setKeyword] = React.useState([]);
-  const [images, setImages] = React.useState([]);
-  const [page, setPage] = React.useState(1);
-  const [total, setTotal] = React.useState(0);
-  const [searching, setSearching] = React.useState(false);
+function ImageSearchPage({ context }) {
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const keyword = searchParams.get("q");
+  const {
+    searchPosts,
+    searchLoadMore,
+    currentSearchPage,
+    getSearchPosts,
+    nextSearchPage,
+    likePost,
+    removePost,
+  } = context;
 
-  useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
-    const q = searchParams.get("q");
-    console.log(q);
-    setKeyword(q);
-    setPage(1);
-    searchImages(q, 1);
+  React.useEffect(() => {
+    getSearchPosts(keyword, 1);
   }, [location]);
 
-  const searchImages = async (keyword, pg = 1) => {
-    setSearching(true);
-    const response = await searchImgs(keyword, page);
-    let imgs = response.data.collection.items;
-    setImages(imgs);
-    setTotal(response.data.collection.metadata.total_hits);
-    setPage(pg);
-  };
-
   const getMoreImages = async () => {
-    let pg = page;
-    pg++;
-    const response = await searchImgs(keyword, pg);
-    let imgs = images.concat(response.data.collection.items);
-    setImages(imgs);
-    setTotal(response.data.collection.metadata.total_hits);
-    setPage(pg);
+    nextSearchPage();
   };
-
-  React.useEffect(() => {});
 
   return (
     <div className="page">
       {(() => {
-        if (typeof images !== "undefined" && images.length > 0) {
+        if (typeof searchPosts !== "undefined" && searchPosts.length > 0) {
           return (
             <InfiniteScroll
               pageStart={1}
               loadMore={getMoreImages}
-              hasMore={total > images.length}
+              hasMore={searchLoadMore}
             >
               <ResponsiveMasonry
                 columnsCountBreakPoints={{
@@ -67,18 +50,22 @@ function ImageSearchPage() {
                 }}
               >
                 <Masonry gutter="10px">
-                  {images.map((img, i) => {
+                  {searchPosts.map((item, i) => {
                     return (
-                      img.links &&
-                      img.links[0] &&
-                      img.links[0].href && (
+                      item.cardId && (
                         <Card
-                          key={i}
-                          href={img?.links[0]?.href}
-                          location={img?.data[0]?.center}
-                          cardId={img?.data[0]?.nasa_id}
-                          desc={img?.data[0]?.description}
-                          title={img?.data[0]?.title}
+                          key={item.cardId}
+                          href={item.href}
+                          location={item.location}
+                          cardId={item.cardId}
+                          desc={item.desc}
+                          title={item.title}
+                          dateCreated={item.date_created}
+                          likeState={
+                            item.like !== undefined && item.like ? true : false
+                          }
+                          onClickLikeBtn={likePost}
+                          onClickRemoveBtn={removePost}
                         />
                       )
                     );
@@ -94,4 +81,4 @@ function ImageSearchPage() {
     </div>
   );
 }
-export default ImageSearchPage;
+export default withPostConsumer(ImageSearchPage);
