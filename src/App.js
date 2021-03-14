@@ -1,5 +1,5 @@
 import React from "react";
-import { Router, Route, Switch, Link } from "react-router-dom";
+import { Router, Route, Switch, Link, BrowserRouter  } from "react-router-dom";
 import HomePage from "./HomePage";
 import { createBrowserHistory as createHistory } from "history";
 import Header from "./Header";
@@ -11,14 +11,16 @@ import "./App.scss";
 
 const history = createHistory();
 
+console.log(process.env.REACT_APP_PROJECT_DIR);
+
 function App() {
   return (
     <div className="App">
-      <Router history={history}>
+      <BrowserRouter basename={`/${process.env.REACT_APP_PROJECT_DIR}`} history={history}>
         <Header />
         <div className="container">
           <Switch>
-            <Route path="/" exact component={HomePage} />
+            <Route path="/" exact  component={HomePage} />
             <Route path="/ImageSearchPage" exact component={ImageSearchPage} />
             <Route path="/LikedImagePage" exact component={LikedImagePage} />
             <Route
@@ -29,7 +31,7 @@ function App() {
           </Switch>
           <ScrollToTopBtn />
         </div>
-      </Router>
+      </BrowserRouter>
     </div>
   );
 }
