@@ -18,7 +18,11 @@ class PostProvider extends Component {
   };
 
   componentDidMount() {
-    this.getData();
+    // this.getData();
+    if (localStorage.getItem("modifiedPost") !== null) {
+      let modifiedPosts = JSON.parse(localStorage.getItem("modifiedPost"));
+      this.state.modifiedPosts = modifiedPosts;
+    }
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -34,15 +38,22 @@ class PostProvider extends Component {
     }
   }
 
-  getData = async (p = 1) => {
+  getData = async (p = 1, keyword = "") => {
+    debugger;
     try {
-      let response = await getAllImg(p);
+      let response;
 
-      if (response?.data?.collection?.items?.length) {
+      if (keyword.length === 0) {
+        response = await getAllImg(p);
+      } else {
+        response = await searchImgs(keyword, p);
+      }
+
+      if (response?.data?.collection?.items) {
         let posts = this.formatData(response.data.collection.items);
         posts = this.sortData(posts, this.state.sort);
 
-        let isMore = response?.data?.collection?.links[0].href?.length
+        let isMore = response?.data?.collection?.links?.length
           ? true
           : false;
 
@@ -51,18 +62,18 @@ class PostProvider extends Component {
           modifiedPosts = JSON.parse(localStorage.getItem("modifiedPost"));
         }
 
-        let mergedPost = this.mergeData(
-          this.state.posts.concat(posts),
-          modifiedPosts
-        );
+        let currentPosts = p > 1 ? this.state.posts.concat(posts) : posts;
+
+        let mergedPost = this.mergeData(currentPosts, modifiedPosts);
 
         this.setState({
           posts: mergedPost,
           loadMore: isMore,
           currentPage: p,
           modifiedPosts: modifiedPosts,
+          keyword: keyword,
         });
-      }
+      } 
     } catch (error) {
       console.log(error);
     }
@@ -139,7 +150,6 @@ class PostProvider extends Component {
   };
 
   updateData = (nasa_id, changeData) => {
-    debugger;
     let item = [];
     let modifiedPosts = JSON.parse(JSON.stringify(this.state.modifiedPosts));
 
@@ -163,12 +173,10 @@ class PostProvider extends Component {
     }
 
     let tempPosts = this.mergeData(this.state.posts, modifiedPosts);
-    let tempSearchPosts = this.mergeData(this.state.searchPosts, modifiedPosts);
 
     this.setState({
       modifiedPosts: modifiedPosts,
       post: tempPosts,
-      searchPosts: tempSearchPosts,
     });
   };
 
@@ -182,7 +190,7 @@ class PostProvider extends Component {
         searchPosts = this.sortData(searchPosts, this.state.sort);
       }
 
-      let isMore = response?.data?.collection?.links[0].href?.length
+      let isMore = response?.data?.collection?.links?.length
         ? true
         : false;
 
@@ -209,7 +217,7 @@ class PostProvider extends Component {
 
   getLikedPost = () => {
     let temp = this.state.modifiedPosts.filter(
-      (item) => item.like !== undefined && item.like
+      (item) => item.like !== undefined && item.like && item.removed !== true
     );
 
     return temp;
@@ -224,14 +232,18 @@ class PostProvider extends Component {
   };
 
   handleLikePost = (nasa_id, like) => {
-    debugger;
     this.updateData(nasa_id, { like: like });
   };
 
-  handleNextPage = () => {
+  handleNextPage = (keyword = "") => {
     let p = this.state.currentPage;
     p++;
-    this.getData(p);
+
+    if (keyword.length === 0) {
+      this.getData(p);
+    } else {
+      this.getData(p, keyword);
+    }
   };
 
   handleNextSearchPage = () => {
@@ -242,13 +254,11 @@ class PostProvider extends Component {
 
   handleChangeSort = (type = "newest") => {
     this.sortData(this.state.posts, type);
-    this.sortData(this.state.searchPosts, type);
     this.sortData(this.state.modifiedPosts, type);
 
     this.setState({
       sort: type,
       posts: JSON.parse(JSON.stringify(this.state.posts)),
-      searchPosts: JSON.parse(JSON.stringify(this.state.searchPosts)),
       modifiedPosts: JSON.parse(JSON.stringify(this.state.modifiedPosts)),
     });
   };

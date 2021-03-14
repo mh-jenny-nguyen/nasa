@@ -14,6 +14,7 @@ function HomePage({context}) {
   React.useEffect(() => {
     if (!initialized) {
       setInitialized(true);
+      getPosts(1);
     }
   });
 

@@ -13,7 +13,11 @@ function ImageSearchPage({ context }) {
   const searchParams = new URLSearchParams(location.search);
   const keyword = searchParams.get("q");
   const {
+    posts,
+    getPosts,
     searchPosts,
+    nextPage,
+    loadMore,
     searchLoadMore,
     currentSearchPage,
     getSearchPosts,
@@ -23,22 +27,22 @@ function ImageSearchPage({ context }) {
   } = context;
 
   React.useEffect(() => {
-    getSearchPosts(keyword, 1);
+    getPosts(1, keyword);
   }, [location]);
 
   const getMoreImages = async () => {
-    nextSearchPage();
+    nextPage(keyword);
   };
 
   return (
     <div className="page">
       {(() => {
-        if (typeof searchPosts !== "undefined" && searchPosts.length > 0) {
+        if (typeof posts !== "undefined" && posts.length > 0) {
           return (
             <InfiniteScroll
               pageStart={1}
               loadMore={getMoreImages}
-              hasMore={searchLoadMore}
+              hasMore={loadMore}
             >
               <ResponsiveMasonry
                 columnsCountBreakPoints={{
@@ -50,7 +54,7 @@ function ImageSearchPage({ context }) {
                 }}
               >
                 <Masonry gutter="10px">
-                  {searchPosts.map((item, i) => {
+                  {posts.map((item, i) => {
                     return (
                       item.cardId && (
                         <Card
