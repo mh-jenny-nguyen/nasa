@@ -6,8 +6,19 @@ body {
   font-family: "Shippori Mincho B1", serif;
 }
 
+*:focus {
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+}
+
 button,
-input {
+input,
+textarea,
+select {
+  cursor: pointer;
+  
   &:focus,
   &:active {
     outline: 0;
@@ -29,6 +40,17 @@ input {
   }
 }
 
-.card {
-  padding-bottom: 15px;
+.react-confirm-alert {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.react-confirm-alert-body {
+  width: 300px  !important;
+  box-sizing: border-box;
+
+  h1 {
+    font-size: 20px;
+  }
 }

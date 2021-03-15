@@ -1,40 +1,14 @@
 import React, { useState } from "react";
-import { Link, useHistory } from "react-router-dom";
-import "./Header.scss";
-import Dropdown from "./Dropdown";
-import { ReactComponent as SearchIcon } from "./assets/img/search-solid.svg";
-import {withPostConsumer} from './context';
+import { useHistory, NavLink, Link } from "react-router-dom";
+import "./style.scss";
+import Dropdown from "../Dropdown";
+import SearchBar from "../SearchBar";
+import {withPostConsumer} from '../../context';
+import {filters} from '../../export';
 
 function Header({ context }) {
   const {changeSort} = context;
   const [keyword, setKeyword] = React.useState('');
-
-  const filters = [
-    {
-      id: 0,
-      title: "Newest",
-      selected: true,
-      key: "newest",
-    },
-    {
-      id: 1,
-      title: "Oldest",
-      selected: false,
-      key: "oldest",
-    },
-    {
-      id: 2,
-      title: "Sort A to Z",
-      selected: false,
-      key: "atoz",
-    },
-    {
-      id: 3,
-      title: "Sort Z to A",
-      selected: false,
-      key: "ztoa",
-    },
-  ];
   const [filterList, setFilterList] = useState(filters);
   let history = useHistory();
 
@@ -52,8 +26,10 @@ function Header({ context }) {
 
   const handleChangeFilter = (id, key) => {
     const temp = filterList;
+
     temp.forEach((item) => (item.selected = false));
     temp[id].selected = true;
+
     setFilterList(temp);
     changeSort(key);
   };
@@ -61,20 +37,20 @@ function Header({ context }) {
   return (
     <nav className="header">
       <div className="header__logo">
-        <a href="#home" className="header__logo-txt">
+        <Link  to="/" className="header__logo-txt">
           NASA:IMG
-        </a>
+        </Link>
       </div>
       <div className="header__tab">
         <ul className="header__tab-wrapper">
           <li className="header__tab-item">
-            <Link to="/">Home</Link>
+            <NavLink activeClassName='is-active' exact  to="/">Home</NavLink>
           </li>
           <li className="header__tab-item">
-            <Link to="/LikedImagePage">Liked</Link>
+            <NavLink activeClassName='is-active' exact  to="/LikedImagePage">Liked</NavLink>
           </li>
           <li className="header__tab-item">
-            <Link to="/RemovedImagePage">Removed</Link>
+            <NavLink activeClassName='is-active' exact  to="/RemovedImagePage">Removed</NavLink>
           </li>
         </ul>
       </div>
@@ -86,21 +62,7 @@ function Header({ context }) {
         />
       </div>
       <div className="header__search">
-        <form className="fsearch" onSubmit={(e) => handleSubmit(e)}>
-          <div className="fsearch__input">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={keyword}
-              onChange={(e) => {
-                handleChangeKeyWord(e.target.value);
-              }}
-            />
-          </div>
-          <button className="fsearch__btn" type="submit">
-            <SearchIcon />
-          </button>
-        </form>
+          <SearchBar onSubmit={handleSubmit} onChangeKeyword={handleChangeKeyWord} keyword={keyword} />
       </div>
     </nav>
   );

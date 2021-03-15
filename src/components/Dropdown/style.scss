@@ -1,0 +1,130 @@
+.dropdown {
+    position: relative;
+    width: 222px;
+    font-size: 1.6rem;
+    user-select: none;
+    margin: 0 2px;
+    width: 25px;
+  
+    &__header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      border: 1px solid rgb(223, 223, 223);
+      line-height: 38px;
+      cursor: default;
+      cursor: pointer;
+      line-height: 1;
+      padding: 8px 2px;
+      border-radius: 50%;
+      width: 100%;
+      border: 0;
+      background-color: #e5e5e5;
+      &:focus,
+      &:active {
+        outline: 0;
+      }
+  
+      span {
+        display: flex;
+      }
+    }
+  
+    &__icon {
+      display: block;
+      margin: auto;
+  
+      svg {
+        height: 10px;
+      }
+    }
+  
+    &__header-title {
+      font-weight: 300;
+      font-size: 12px;
+      margin: 0;
+      display: none;
+    }
+  
+    .angle-down {
+      margin-right: 20px;
+      color: black;
+    }
+  
+    &__list {
+      position: absolute;
+      z-index: 10;
+      max-height: 215px;
+      box-shadow: 0 2px 5px -1px rgb(232, 232, 232);
+      background-color: white;
+      font-weight: 700;
+      text-align: left;
+      -webkit-overflow-scrolling: touch;
+      border: 0;
+      padding: 5px 0;
+      margin-top: 5px;
+      border-radius: 10px;
+      width: 100px;
+      right: 0;
+  
+      &-item {
+        overflow: hidden;
+        width: 100%;
+        padding: 8px 10px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        cursor: default;
+        cursor: pointer;
+        border: 0;
+        background-color: unset;
+        font-size: 11px;
+        padding: 5px 8px;
+        line-height: 1.2;
+        display: block;
+        text-align: left;
+  
+        &:hover {
+          background-color: #000;
+          color: #fff;
+        }
+  
+        svg {
+          height: 10px;
+          margin-left: 10px;
+        }
+      }
+    }
+  
+    @media (min-width: 768px) {
+      width: auto;
+      min-width: 120px;
+  
+      &__header {
+          border-radius: 24px;
+          padding: 8px 15px;
+          position: relative;
+      }
+  
+      &__icon {
+          margin-left: 10px;
+          position: absolute;
+          right: 15px;
+      }
+  
+      &__header-title {
+          display: block;
+          font-size: 14px;
+  
+      }
+  
+      &__list {
+          width: 100%;
+      }
+  
+      &__list-item {
+          font-size: 13px;
+      }
+  }
+  }
+  

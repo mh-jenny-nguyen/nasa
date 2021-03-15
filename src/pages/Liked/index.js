@@ -1,35 +1,35 @@
 import React from "react";
-import PageContainer from "./PageContainer";
-import { withPostConsumer } from "./context";
-import Nothing from "./Nothing";
+import "./style.scss";
+import PageContainer from "../../components/PageContainer";
+import { withPostConsumer } from "../../context";
+import Nothing from "../../components/Nothing";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import Card from "./Card";
+import Card from "../../components/Card";
 
-function RemovedImagePage({ context }) {
+function LikedImagePage({ context }) {
   const [initialized, setInitialized] = React.useState(false);
-  const [removedPosts, setRemovedPosts] = React.useState([]);
+  const [likedPost, setLikedPost] = React.useState([]);
   const {
     modifiedPosts,
-    getRemovedPosts,
-    restorePost,
-    sort,
+    likePost,
+    getLikedPost,
   } = context;
 
   React.useEffect(() => {
     if( ! initialized) {
-        setRemovedPosts(getRemovedPosts());
+        setLikedPost(getLikedPost());
         setInitialized(true);
     }
   });
 
   React.useEffect(() => {
-    setRemovedPosts(getRemovedPosts());
+    setLikedPost(getLikedPost());
   }, [modifiedPosts]);
 
   return (
     <PageContainer>
       {(() => {
-        if (typeof removedPosts !== "undefined" && removedPosts.length > 0) {
+        if (typeof likedPost !== "undefined" && likedPost.length > 0) {
           return (
             <ResponsiveMasonry
               columnsCountBreakPoints={{
@@ -41,7 +41,7 @@ function RemovedImagePage({ context }) {
               }}
             >
               <Masonry gutter="10px">
-                {removedPosts.map((item, i) => {
+                {likedPost.map((item, i) => {
                   return (
                     item.cardId && (
                       <Card
@@ -52,11 +52,12 @@ function RemovedImagePage({ context }) {
                         desc={item.desc}
                         title={item.title}
                         dateCreated={item.date_created}
-                        showLikeBtn={false}
+                        likeState={
+                          item.like !== undefined && item.like ? true : false
+                        }
                         showRemoveBtn={false}
                         showEditBtn={false}
-                        showUndoBtn={true}
-                        onClickUndoBtn={restorePost}
+                        onClickLikeBtn={likePost}
                       />
                     )
                   );
@@ -72,4 +73,4 @@ function RemovedImagePage({ context }) {
   );
 }
 
-export default withPostConsumer(RemovedImagePage);
+export default withPostConsumer(LikedImagePage);

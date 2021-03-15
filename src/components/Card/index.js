@@ -1,12 +1,13 @@
 import React from "react";
-import { ReactComponent as HeartIcon } from "./assets/img/heart-solid.svg";
-import { ReactComponent as TrashIcon } from "./assets/img/trash-solid.svg";
-import { ReactComponent as EditIcon } from "./assets/img/pencil-alt-solid.svg";
-import { ReactComponent as RestoreIcon } from "./assets/img/trash-restore-solid.svg";
-import { truncateWithEllipsis } from "./helper.js";
+import { ReactComponent as HeartIcon } from "../../assets/img/heart-solid.svg";
+import { ReactComponent as TrashIcon } from "../../assets/img/trash-solid.svg";
+import { ReactComponent as EditIcon } from "../../assets/img/pencil-alt-solid.svg";
+import { ReactComponent as RestoreIcon } from "../../assets/img/trash-restore-solid.svg";
+import { truncateWithEllipsis, dateFormat } from "../../helper";
+import { confirmAlert } from 'react-confirm-alert';
 import { Link } from "react-router-dom";
-import "./Card.scss";
-import { dateFormat } from "./helper";
+import "./style.scss";
+import 'react-confirm-alert/src/react-confirm-alert.css';
 
 const Card = (props) => {
   const handleClickLikeBtn = (nasa_id) => {
@@ -17,30 +18,61 @@ const Card = (props) => {
 
   const handleClickRemoveBtn = (nasa_id) => {
     if (typeof props.onClickRemoveBtn === "function") {
-      props.onClickRemoveBtn(nasa_id);
+      confirmAlert({
+        title: 'Confirm',
+        message: 'Are you sure to delete this item ?',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: () => {
+              props.onClickRemoveBtn(nasa_id);
+            }
+          },
+          {
+            label: 'No',
+          }
+        ]
+      });
     }
   };
 
   const handleClickUndoBtn = (nasa_id) => {
     if (typeof props.onClickUndoBtn === "function") {
-      props.onClickUndoBtn(nasa_id);
+      confirmAlert({
+        title: 'Confirm',
+        message: 'Are you sure to restore this item',
+        buttons: [
+          {
+            label: 'Yes',
+            onClick: () => {
+              props.onClickUndoBtn(nasa_id);
+            }
+          },
+          {
+            label: 'No',
+          }
+        ]
+      });
     }
-  }
+  };
 
   return (
     <div className="card">
-      <img
-        className="card__img"
-        src={props.href}
-        style={{ display: "block", width: "100%" }}
-      />
+      <div className="card__img-wrap">
+        <img
+          alt="This is Card Avatar"
+          className="card__img"
+          src={props.href}
+          style={{ display: "block", width: "100%" }}
+        />
+      </div>
       <div className="card__detail">
-        <div className="card__location">{props.location}</div>
+        <div className="card__location">{truncateWithEllipsis(props.location, 30)}</div>
         <div className="card__control">
           {props.showEditBtn && (
             <Link
               className="card__btn--edit card__btn"
-              to={`/edit/${props.cardId}`}
+              to={`/EditPage/${props.cardId}`}
             >
               <EditIcon />
             </Link>
@@ -51,7 +83,7 @@ const Card = (props) => {
               data-id={props.cardId}
               className="card__btn--remove card__btn"
               type="button"
-              title="Remove photo"
+              title="Remove"
               onClick={(e) => {
                 handleClickRemoveBtn(e.target.getAttribute("data-id"));
               }}

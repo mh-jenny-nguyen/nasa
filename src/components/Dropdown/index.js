@@ -1,14 +1,13 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
-import './Dropdown.scss';
-import { ReactComponent as AngleUpIcon } from "./assets/img/angle-up-solid.svg";
-import { ReactComponent as AngleDownIcon } from "./assets/img/angle-down-solid.svg";
-import { ReactComponent as CheckIcon } from "./assets/img/check-solid.svg";
+import './style.scss';
+import { ReactComponent as AngleUpIcon } from "../../assets/img/angle-up-solid.svg";
+import { ReactComponent as AngleDownIcon } from "../../assets/img/angle-down-solid.svg"
+import { ReactComponent as CheckIcon } from "../../assets/img/check-solid.svg";
 
 function Dropdown(props) {
   const [isListOpen, setIsListOpen] = useState(false);
   const [headerTitle, setHeaderTitle] = useState(props.title);
-  const [list, setList] = useState(props.list);
   
   const toggleList = () => {
     setIsListOpen(!isListOpen);
@@ -33,7 +32,7 @@ function Dropdown(props) {
       </button>
       {isListOpen && (
         <div role="list" className="dropdown__list">
-          {list.map((item) => (
+          {props.list.map((item) => (
             <button
               type="button"
               className="dropdown__list-item"

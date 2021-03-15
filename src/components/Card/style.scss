@@ -1,0 +1,141 @@
+.card {
+  position: relative;
+  padding-bottom: 15px;
+
+  &__img-wrap {
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #e5e5e5;
+    margin-bottom: 12px;
+    border-radius: 18px;
+
+    @media (min-width: 768px) {
+      min-height: 120px;
+    }
+  }
+
+  &__img {
+    border-radius: 18px;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  &__detail {
+    position: absolute;
+    top: 10px;
+    height: calc(100% - 70px);
+    padding: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    div:not(.card__control),
+    .card__control button,
+    .card__control a {
+      opacity: 0;
+    }
+
+    div,
+    button,
+    a {
+      transition: opacity 0.4s ease-in-out;
+    }
+
+    &:hover {
+      div,
+      .card__control button,
+      .card__control a {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__location {
+    display: none;
+  }
+
+  &__control {
+    display: inline-flex;
+  }
+
+  &__desc {
+    display: none;
+  }
+
+  &__btn {
+    background-color: #fbfbfb;
+    border: 0;
+    padding: 6px;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    margin: 0 3px;
+    transition: all 0.2s ease;
+
+    svg {
+      height: 15px;
+      color: #111;
+      pointer-events: none;
+    }
+
+    &:hover {
+      background-color: #111;
+
+      svg {
+        color: #fbfbfb;
+      }
+    }
+
+    &--like-up {
+      background-color: #fff !important;
+      opacity: 1 !important;
+
+      svg {
+        color: #e90029 !important;
+      }
+    }
+  }
+
+  @media (min-width: 576px) {
+    &__detail {
+        justify-content: space-between;
+    }
+
+    &__desc {
+      font-size: 12px;
+      color: #fff;
+      font-weight: 600;
+      padding: 0 10px;
+      display: block;
+    }
+    &__location {
+      font-size: 10px;
+      font-weight: 600;
+      background-color: #111;
+      display: inline-block;
+      padding: 4px 10px;
+      color: #fff;
+      border-radius: 14px;
+      display: block;
+      max-width: 40px;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      hyphens: auto;
+    }
+  }
+}

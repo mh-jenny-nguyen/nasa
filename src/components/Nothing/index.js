@@ -1,5 +1,5 @@
 import React from "react";
-import './Nothing.scss';
+import './style.scss';
 
 const Nothing = () => {
     return (

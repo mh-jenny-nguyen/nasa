@@ -1,6 +1,6 @@
 import React, {useState} from 'react'; 
-import {ReactComponent as ArrowUpIcon} from './assets/img/arrow-up-solid.svg';
-import './ScrollToTopBtn.scss';
+import {ReactComponent as ArrowUpIcon} from '../../assets/img/arrow-up-solid.svg';
+import './style.scss';
   
 const ScrollToTopBtn = () =>{ 
   

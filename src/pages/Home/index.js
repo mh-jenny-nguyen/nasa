@@ -1,47 +1,37 @@
 import React from "react";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import "./style.scss";
 import InfiniteScroll from "react-infinite-scroller";
-import "./HomePage.css";
 import Masonry, { ResponsiveMasonry } from "react-responsive-masonry";
-import Card from "./Card";
-import Nothing from "./Nothing";
-import { withPostConsumer } from "./context";
+import Card from "../../components/Card";
+import Nothing from "../../components/Nothing";
+import PageContainer from '../../components/PageContainer';
+import {withPostConsumer} from '../../context';
 
-function ImageSearchPage({ context }) {
-  const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const keyword = searchParams.get("q");
-  const {
-    posts,
-    getPosts,
-    searchPosts,
-    nextPage,
-    loadMore,
-    searchLoadMore,
-    currentSearchPage,
-    getSearchPosts,
-    nextSearchPage,
-    likePost,
-    removePost,
-  } = context;
+function HomePage({context}) {
+  const [initialized, setInitialized] = React.useState(false);
+  const {posts, getPosts, loadMore, nextPage, likePost, removePost, loading} = context;
 
   React.useEffect(() => {
-    getPosts(1, keyword);
-  }, [location]);
+    if (!initialized) {
+      setInitialized(true);
+      getPosts(1);
+    }
+  });
 
-  const getMoreImages = async () => {
-    nextPage(keyword);
-  };
+  const getMore = async() => {
+      if( ! loading) {
+        nextPage();
+      }
+  }
 
   return (
-    <div className="page">
+    <PageContainer>
       {(() => {
         if (typeof posts !== "undefined" && posts.length > 0) {
           return (
             <InfiniteScroll
               pageStart={1}
-              loadMore={getMoreImages}
+              loadMore={getMore}
               hasMore={loadMore}
             >
               <ResponsiveMasonry
@@ -65,9 +55,7 @@ function ImageSearchPage({ context }) {
                           desc={item.desc}
                           title={item.title}
                           dateCreated={item.date_created}
-                          likeState={
-                            item.like !== undefined && item.like ? true : false
-                          }
+                          likeState={(item.like !== undefined && item.like ? true : false)}
                           onClickLikeBtn={likePost}
                           onClickRemoveBtn={removePost}
                         />
@@ -82,7 +70,7 @@ function ImageSearchPage({ context }) {
           return <Nothing />;
         }
       })()}
-    </div>
+    </PageContainer>
   );
 }
-export default withPostConsumer(ImageSearchPage);
+export default withPostConsumer(HomePage);

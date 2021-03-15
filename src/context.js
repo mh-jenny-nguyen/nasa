@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { getAllImg, searchImgs } from "./request";
+import { getAllImg, searchImgs, getPostDetail } from "./request";
 
 const PostContext = React.createContext();
 
@@ -11,17 +11,14 @@ class PostProvider extends Component {
     currentPage: 1,
     sort: "newest",
     loadMore: true,
-    searchPosts: [],
     keyword: "",
-    currentSearchPage: 1,
-    searchLoadMore: true,
   };
 
   componentDidMount() {
-    // this.getData();
     if (localStorage.getItem("modifiedPost") !== null) {
       let modifiedPosts = JSON.parse(localStorage.getItem("modifiedPost"));
       this.state.modifiedPosts = modifiedPosts;
+      this.setState({loading: false});
     }
   }
 
@@ -34,12 +31,12 @@ class PostProvider extends Component {
         "modifiedPost",
         JSON.stringify(this.state.modifiedPosts)
       );
-      console.log("update local storage");
     }
   }
 
   getData = async (p = 1, keyword = "") => {
-    debugger;
+    this.setState({ loading: true });
+
     try {
       let response;
 
@@ -53,9 +50,7 @@ class PostProvider extends Component {
         let posts = this.formatData(response.data.collection.items);
         posts = this.sortData(posts, this.state.sort);
 
-        let isMore = response?.data?.collection?.links?.length
-          ? true
-          : false;
+        let isMore = response?.data?.collection?.links?.length ? true : false;
 
         let modifiedPosts = [];
         if (localStorage.getItem("modifiedPost") !== null) {
@@ -72,10 +67,13 @@ class PostProvider extends Component {
           currentPage: p,
           modifiedPosts: modifiedPosts,
           keyword: keyword,
+          loading: false,
         });
-      } 
+      }
     } catch (error) {
       console.log(error);
+      this.setState({ loading: false });
+
     }
   };
 
@@ -150,6 +148,9 @@ class PostProvider extends Component {
   };
 
   updateData = (nasa_id, changeData) => {
+    this.setState({ loading: true });
+
+    let flag = false;
     let item = [];
     let modifiedPosts = JSON.parse(JSON.stringify(this.state.modifiedPosts));
 
@@ -157,9 +158,9 @@ class PostProvider extends Component {
 
     if (findIndex !== -1) {
       //modified
-      let temp;
       item = { ...modifiedPosts[findIndex], ...changeData };
       modifiedPosts[findIndex] = item;
+      flag = true;
     } else {
       //new
       let findIndex2 = this.state.posts.findIndex(
@@ -169,6 +170,7 @@ class PostProvider extends Component {
       if (findIndex2 !== -1) {
         item = { ...this.state.posts[findIndex2], ...changeData };
         modifiedPosts.push(item);
+        flag = true;
       }
     }
 
@@ -176,43 +178,39 @@ class PostProvider extends Component {
 
     this.setState({
       modifiedPosts: modifiedPosts,
-      post: tempPosts,
+      posts: tempPosts,
+      loading: false,
     });
+
+    return flag;
   };
 
-  searchPosts = async (keyword, page = 1) => {
-    try {
-      let searchPosts = [];
-      const response = await searchImgs(keyword, page);
+  getPostDetail = async (nasa_id) => {
+    let item = this.state.modifiedPosts.find((item) => item.cardId === nasa_id);
 
-      if (response?.data?.collection?.items?.length) {
-        searchPosts = this.formatData(response.data.collection.items);
-        searchPosts = this.sortData(searchPosts, this.state.sort);
-      }
-
-      let isMore = response?.data?.collection?.links?.length
-        ? true
-        : false;
-
-      let modifiedPosts = [];
-      if (localStorage.getItem("modifiedPost") !== null) {
-        modifiedPosts = JSON.parse(localStorage.getItem("modifiedPost"));
-      }
-
-      let currentSearchPosts =
-        page > 1 ? this.state.searchPosts.concat(searchPosts) : searchPosts;
-
-      let mergedPost = this.mergeData(currentSearchPosts, modifiedPosts);
-
-      this.setState({
-        searchPosts: mergedPost,
-        searchLoadMore: isMore,
-        currentSearchPage: page,
-        keyword: keyword,
-      });
-    } catch (error) {
-      console.log(error);
+    if (item) {
+      return item;
     }
+
+    this.setState({ loading: true });
+    try {
+      let response = await getPostDetail(nasa_id);
+      if (response?.data?.collection?.items) {
+        let item = this.formatData(response.data.collection.items);
+
+        this.setState({
+          posts: item,
+          loading: false,
+        });
+
+        return item[0];
+      }
+    } catch (err) {
+      console.log(err);
+      this.setState({ loading: false });
+    }
+
+    return false;
   };
 
   getLikedPost = () => {
@@ -231,6 +229,10 @@ class PostProvider extends Component {
     return temp;
   };
 
+  handleEditPost = (nasa_id, changeData) => {
+    return this.updateData(nasa_id, changeData);
+  };
+
   handleLikePost = (nasa_id, like) => {
     this.updateData(nasa_id, { like: like });
   };
@@ -246,13 +248,8 @@ class PostProvider extends Component {
     }
   };
 
-  handleNextSearchPage = () => {
-    let p = this.state.currentSearchPage;
-    p++;
-    this.searchPosts(this.state.keyword, p);
-  };
-
   handleChangeSort = (type = "newest") => {
+    this.setState({ loading: true });
     this.sortData(this.state.posts, type);
     this.sortData(this.state.modifiedPosts, type);
 
@@ -260,6 +257,7 @@ class PostProvider extends Component {
       sort: type,
       posts: JSON.parse(JSON.stringify(this.state.posts)),
       modifiedPosts: JSON.parse(JSON.stringify(this.state.modifiedPosts)),
+      loading: false,
     });
   };
 
@@ -291,8 +289,8 @@ class PostProvider extends Component {
           getRemovedPosts: this.getRemovedPosts,
           restorePost: this.handleRestorePost,
           setKeyWord: this.handleSetKeyword,
-          getSearchPosts: this.searchPosts,
-          nextSearchPage: this.handleNextSearchPage,
+          getPostDetail: this.getPostDetail,
+          editPost: this.handleEditPost,
         }}
       >
         {this.props.children}

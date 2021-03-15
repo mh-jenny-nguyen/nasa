@@ -36,16 +36,20 @@
             font-weight: bold;
             margin-right: 2px;
             margin-left: 2px;
-            padding: 8px 10px;
-            background-color: #111;
-            border-radius: 24px;
-            display: block;
 
             a {
+                padding: 8px 10px;
+                background-color: #a1a1a1;
+                border-radius: 24px;
+                display: block;
                 text-decoration: none;
                 line-height: 100%;
                 color: #fff;
                 display: block;
+
+                &.is-active {
+                    background-color: #111;
+                }
             }
         }
     }
@@ -103,7 +107,7 @@
 
 //search
 .fsearch {
-    background-color: #fbfbfb;
+    background-color: #f7f7f7;
     border-radius: 20px;
     display: flex;
     padding: 4px 10px;
