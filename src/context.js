@@ -78,6 +78,8 @@ class PostProvider extends Component {
   };
 
   sortData(data, type = "newest") {
+    this.setState({ loading: false });
+
     let tempData = data;
     switch (type) {
       case "newest":
@@ -105,6 +107,7 @@ class PostProvider extends Component {
         break;
     }
 
+    this.setState({ loading: false });
     return tempData;
   }
 
@@ -214,17 +217,23 @@ class PostProvider extends Component {
   };
 
   getLikedPost = () => {
+    this.setState({ loading: true });
     let temp = this.state.modifiedPosts.filter(
       (item) => item.like !== undefined && item.like && item.removed !== true
     );
-
+    
+    this.setState({ loading: false });
     return temp;
   };
 
   getRemovedPosts = () => {
+    this.setState({ loading: true });
+
     let temp = this.state.modifiedPosts.filter(
       (item) => item.removed !== undefined && item.removed
     );
+
+    this.setState({ loading: false });
 
     return temp;
   };
@@ -259,6 +268,7 @@ class PostProvider extends Component {
       modifiedPosts: JSON.parse(JSON.stringify(this.state.modifiedPosts)),
       loading: false,
     });
+    this.setState({ loading: false });
   };
 
   handleRemovePost = (nasa_id) => {
