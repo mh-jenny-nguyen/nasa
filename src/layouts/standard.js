@@ -10,7 +10,7 @@ const Layout = (props) => {
 	let {loading} = context;
 
   return (
-    <React.Fragment>
+    <div className="wrap">
       {loading && 
         <FullPageLoader/>
       }
@@ -19,7 +19,7 @@ const Layout = (props) => {
         {props.children}
       </div>
       <ScrollToTop />
-    </React.Fragment>
+    </div>
   );
 };
 
